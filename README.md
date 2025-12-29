@@ -51,7 +51,7 @@ go run main.go add "Finish Go CLI project"
 
 ## 👤 Author
 ### Mohamed Karam
-Backend Developer — Go & Distributed Systems
+Backend Developer — Laravel & Go
 
 ---
 
