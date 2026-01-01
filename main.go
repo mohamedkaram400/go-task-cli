@@ -29,6 +29,13 @@ func main() {
             }
             listTasks(filter)
 
+        case "list-done":
+            if len(os.Args) != 2 {
+                fmt.Println("Usage: task-cli list-done")
+                return
+            }
+            listDoneTasks()
+
         case "update":
             if len(os.Args) != 4 {
                 fmt.Println("Usage: task-cli update <id> \"new description\"")

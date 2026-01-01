@@ -54,6 +54,21 @@ func listTasks(filter string) {
 	}
 }
 
+func listDoneTasks() {
+	tasks, err := loadTasks()
+	if err != nil {
+		fmt.Println("Error loading tasks:", err)
+		return
+	}
+
+	for _, task := range tasks {
+		if task.Status == "done" {
+			fmt.Printf("ID: %d | %s | Status: %s | Updated: %s\n",
+				task.ID, task.Description, task.Status, task.UpdatedAt.Format(time.RFC1123))
+		}
+	}
+}
+
 func updateTask(taskId string, newDescription string) {
     // Get all tasks
     tasks, err := loadTasks()
