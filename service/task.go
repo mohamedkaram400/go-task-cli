@@ -1,37 +1,36 @@
-package main
+package service
 
 import (
 	"fmt"
 	"strconv"
 	"time"
+
+	enum "github.com/mohamedkaram400/go-task-cli/Enum"
+	"github.com/mohamedkaram400/go-task-cli/model"
+	"github.com/mohamedkaram400/go-task-cli/storage"
 )
 
-type Task struct {
-	ID          int       `json:"id"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-}
 
-func addTask(description string) {
-	tasks, _ := loadTasks()
+func AddTask(title string, description string) {
+
+	tasks, _ := storage.LoadTasks()
 	newID := 1
 	if len(tasks) > 0 {
 		newID = tasks[len(tasks)-1].ID + 1
 	}
 
-	newTask := Task{
+	newTask := model.Task{
 		ID:          newID,
+		Title:       title,
 		Description: description,
-		Status:      "todo",
+		Status:      enum.TODO,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
 
 	tasks = append(tasks, newTask)
 
-	err := saveTasks(tasks)
+	err := storage.SaveTasks(tasks)
 	if err != nil {
 		fmt.Println("Error saving task:", err)
 	} else {
@@ -39,39 +38,25 @@ func addTask(description string) {
 	}
 }
 
-func listTasks(filter string) {
-	tasks, err := loadTasks()
+func ListTasks(filter string) {
+	tasks, err := storage.LoadTasks()
 	if err != nil {
 		fmt.Println("Error loading tasks:", err)
 		return
 	}
 
+
 	for _, task := range tasks {
-		if filter == "" || task.Status == filter {
-			fmt.Printf("ID: %d | %s | Status: %s | Updated: %s\n",
-				task.ID, task.Description, task.Status, task.UpdatedAt.Format(time.RFC1123))
+		if filter == "" || task.Status == enum.TaskStatus(filter) {
+			fmt.Printf("ID: %d | Title: %s |Description: %s | Status: %s | Updated: %s\n",
+				task.ID, task.Title, task.Description, task.Status, task.UpdatedAt.Format(time.RFC1123))
 		}
 	}
 }
 
-func listDoneTasks() {
-	tasks, err := loadTasks()
-	if err != nil {
-		fmt.Println("Error loading tasks:", err)
-		return
-	}
-
-	for _, task := range tasks {
-		if task.Status == "done" {
-			fmt.Printf("ID: %d | %s | Status: %s | Updated: %s\n",
-				task.ID, task.Description, task.Status, task.UpdatedAt.Format(time.RFC1123))
-		}
-	}
-}
-
-func updateTask(taskId string, newDescription string) {
+func UpdateTask(taskId string, newDescription string) {
     // Get all tasks
-    tasks, err := loadTasks()
+    tasks, err := storage.LoadTasks()
     if err != nil {
         fmt.Println("Error loading tasks:", err)
 		return
@@ -93,14 +78,14 @@ func updateTask(taskId string, newDescription string) {
         }
     }
 
-    if err := saveTasks(tasks); err != nil {
+    if err := storage.SaveTasks(tasks); err != nil {
         fmt.Println("Error saving tasks:", err)
     }
 }
 
-func markTaskInProgress(taskId string) {
+func MarkTaskInProgress(taskId string) {
     // Get all tasks
-    tasks, err := loadTasks()
+    tasks, err := storage.LoadTasks()
     if err != nil {
         fmt.Println("Error loading tasks: ", err)
     }
@@ -116,14 +101,14 @@ func markTaskInProgress(taskId string) {
         }
     }
 
-    if err := saveTasks(tasks); err != nil {
+    if err := storage.SaveTasks(tasks); err != nil {
         fmt.Println("Error saving tasks:", err)
     }
 }
 
-func markTaskDone(taskId string) {
+func MarkTaskDone(taskId string) {
     // Get all tasks
-    tasks, err := loadTasks()
+    tasks, err := storage.LoadTasks()
     if err != nil {
         fmt.Println("Error loading tasks: ", err)
     }
@@ -139,14 +124,14 @@ func markTaskDone(taskId string) {
         }
     }
 
-    if err := saveTasks(tasks); err != nil {
+    if err := storage.SaveTasks(tasks); err != nil {
         fmt.Println("Error saving tasks:", err)
     }
 }
 
-func markAllTaskDone() {
+func MarkAllTaskDone() {
     // Get all tasks
-    tasks, err := loadTasks()
+    tasks, err := storage.LoadTasks()
     if err != nil {
         fmt.Println("Error loading tasks: ", err)
     }
@@ -156,16 +141,16 @@ func markAllTaskDone() {
         tasks[i].Status = "done"
     }
 
-    if err := saveTasks(tasks); err != nil {
+    if err := storage.SaveTasks(tasks); err != nil {
         fmt.Println("Error saving tasks:", err)
     } else {
         fmt.Println("All tasks marked as done")
     }
 }
 
-func deleteTask(taskId string) {
+func DeleteTask(taskId string) {
     // Get all tasks
-    tasks, err := loadTasks()
+    tasks, err := storage.LoadTasks()
     if err != nil {
         fmt.Println("Error loading tasks: ", err)
     }
@@ -189,7 +174,7 @@ func deleteTask(taskId string) {
         return 
     }
 
-    if err := saveTasks(tasks); err != nil {
+    if err := storage.SaveTasks(tasks); err != nil {
         fmt.Println("Error saving tasks:", err)
     } else {
         fmt.Println("Task deleted successfully")

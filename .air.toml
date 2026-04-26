@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o ./tmp/main ."
+cmd = "go build -o ./tmp/main ./cmd/main.go" 
 bin = "./tmp/main"
 entrypoint = ["./tmp/main", "list"] # optional default command to run automatically
 

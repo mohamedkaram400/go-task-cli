@@ -1,15 +1,17 @@
-package main
+package storage
 
 import (
-    "encoding/json"
-    "os"
+	"encoding/json"
+	"os"
+
+	"github.com/mohamedkaram400/go-task-cli/model"
 )
 
-const fileName = "tasks.json"
+const fileName = "storage/tasks.json"
 
-func loadTasks() ([]Task, error) {
+func LoadTasks() ([]model.Task, error) {
     if _, err := os.Stat(fileName); os.IsNotExist(err) {
-        return []Task{}, nil
+        return []model.Task{}, nil
     }
 
     data, err := os.ReadFile(fileName)
@@ -17,12 +19,12 @@ func loadTasks() ([]Task, error) {
         return nil, err
     }
 
-    var tasks []Task
+    var tasks []model.Task
     err = json.Unmarshal(data, &tasks)
     return tasks, err
 }
 
-func saveTasks(tasks []Task) error {
+func SaveTasks(tasks []model.Task) error {
     data, err := json.MarshalIndent(tasks, "", "  ")
     if err != nil {
         return err
